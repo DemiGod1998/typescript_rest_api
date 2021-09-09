@@ -143,10 +143,43 @@ const addPost = async (req: Request, res: Response, next: NextFunction) => {
     // }
 };
 
+const deletePost = async (req: Request, res: Response, next: NextFunction) => {
+    // get the post id from req.params
+    const {entryId} = req.params;
+    const entry = db.collection('entries').doc(entryId)
+    await entry.delete()
+    
+    // delete the post
+    // let response: AxiosResponse = await axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`);
+    // return response
+    return res.status(200).json({
+        status: 'success',
+        message: 'post deleted successfully'
+    });
+};
+
+const updatePost = async (req: Request, res: Response, next: NextFunction) => {
+    const {body : {text, title}, params : {entryId}} = req;
+    const entry = db.collection('entries').doc(entryId);
+    const currentData = (await entry.get()).data() || {}
+
+    const entryObject = {
+        title : title || currentData.title,
+        text: text || currentData.text
+    }
+
+    await entry.set(entryObject)
+    return res.status(200).json({
+        status: 'success',
+        message: 'entry updated successfully',
+        data: entryObject
+    })
+};
+
 export default { 
     // getPosts, 
     getPost, 
-    // updatePost, 
-    // deletePost, 
+    updatePost, 
+    deletePost, 
     addPost
  };
