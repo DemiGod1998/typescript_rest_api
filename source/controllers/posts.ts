@@ -73,6 +73,42 @@ body: EntryType,
 params: { entryId: string }
 }
 
+// const getPosts = async(req: Request, res: Response, next: NextFunction) => {
+//     const allEntries: EntryType[] = []
+//     const querySnapshot = await db.collection('entries').doc("Kf99XH467BgUwejQl75E").get()
+//     // if (querySnapshot.exists()) {
+//     console.log("Document data:", querySnapshot.data());
+//     // } else {
+//     // // doc.data() will be undefined in this case
+//     // console.log("No such document!");
+//     // }
+//     // querySnapshot.then(
+//     //     (querySnapshot: any) => {
+//     //         if(!querySnapshot.empty){
+//     //             querySnapshot.array.forEach((doc : any) => allEntries.push(doc.data()));
+//     //         }
+//     //     }
+//     // )
+//     // querySnapshot.forEach((doc: any) => allEntries.push(doc.data()))
+//     return res.status(200).json(allEntries)
+// }
+
+// getting a single post
+const getPost = async (req: Request, res: Response, next: NextFunction) => {
+    // get the post id from the req
+    let id: string = req.params.entryId;
+    const singleEntry: EntryType[] = []
+    const querySnapshot = await db.collection('entries').doc(id).get()
+    singleEntry.push(querySnapshot.data())
+    // get the post
+    // let result: AxiosResponse = await axios.get(`https://jsonplaceholder.typicode.com/posts/${id}`);
+    // let post: Post = result.data;
+    // return res.status(200).json({
+    //     message: post
+    // });
+    return res.status(200).json(singleEntry);
+};
+
 const addPost = async (req: Request, res: Response, next: NextFunction) => {
     // get the data from req.body
     // let title: string = req.body.title;
@@ -109,7 +145,7 @@ const addPost = async (req: Request, res: Response, next: NextFunction) => {
 
 export default { 
     // getPosts, 
-    // getPost, 
+    getPost, 
     // updatePost, 
     // deletePost, 
     addPost
