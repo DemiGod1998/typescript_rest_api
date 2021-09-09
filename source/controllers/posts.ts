@@ -73,25 +73,26 @@ body: EntryType,
 params: { entryId: string }
 }
 
-// const getPosts = async(req: Request, res: Response, next: NextFunction) => {
-//     const allEntries: EntryType[] = []
-//     const querySnapshot = await db.collection('entries').doc("Kf99XH467BgUwejQl75E").get()
-//     // if (querySnapshot.exists()) {
-//     console.log("Document data:", querySnapshot.data());
-//     // } else {
-//     // // doc.data() will be undefined in this case
-//     // console.log("No such document!");
-//     // }
-//     // querySnapshot.then(
-//     //     (querySnapshot: any) => {
-//     //         if(!querySnapshot.empty){
-//     //             querySnapshot.array.forEach((doc : any) => allEntries.push(doc.data()));
-//     //         }
-//     //     }
-//     // )
-//     // querySnapshot.forEach((doc: any) => allEntries.push(doc.data()))
-//     return res.status(200).json(allEntries)
-// }
+const getPosts = async(req: Request, res: Response, next: NextFunction) => {
+    const allEntries: EntryType[] = []
+    const querySnapshot = await db.collection('entries').get()
+
+    // if (querySnapshot.exists()) {
+    // console.log("Document data:", querySnapshot.data());
+    // } else {
+    // // doc.data() will be undefined in this case
+    // console.log("No such document!");
+    // }
+    // querySnapshot.then(
+    //     (querySnapshot: any) => {
+    //         if(!querySnapshot.empty){
+    //             querySnapshot.array.forEach((doc : any) => allEntries.push(doc.data()));
+    //         }
+    //     }
+    // )
+    querySnapshot.docs.forEach((doc: any) => allEntries.push(doc.data()))
+    return res.status(200).json(allEntries)
+}
 
 // getting a single post
 const getPost = async (req: Request, res: Response, next: NextFunction) => {
@@ -164,6 +165,7 @@ const updatePost = async (req: Request, res: Response, next: NextFunction) => {
     const currentData = (await entry.get()).data() || {}
 
     const entryObject = {
+        id : entryId,
         title : title || currentData.title,
         text: text || currentData.text
     }
@@ -177,7 +179,7 @@ const updatePost = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 export default { 
-    // getPosts, 
+    getPosts, 
     getPost, 
     updatePost, 
     deletePost, 
