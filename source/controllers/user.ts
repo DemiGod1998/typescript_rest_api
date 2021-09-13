@@ -1,12 +1,14 @@
 import { Response, NextFunction } from "express";
 import { db } from "../config/firebase";
+import {hashPassword, validatePassword} from "./hash"
 const bcrypt = require("bcryptjs");
-
+const jwt = require("jsonwebtoken");
 type EntryType = {
     email: string,
     password: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    token: string
 }
 
 type Request= {
@@ -14,35 +16,48 @@ type Request= {
 }
 
 const register = async(req: Request, res: Response, next: NextFunction) =>{
-    const {email, password, firstName, lastName} = req.body;
+    const email = req.body.email.toLowerCase();
+    const password = req.body.password;
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
     if(!(email && password && firstName && lastName))
     {
         res.status(400).json({
             status: "failed",
-            message: "all fields are required."
+            message: "firstName, lastName, email and password are required for registration."
         });
+        return;
     }
 
-    const userRef = db.collection('Users').doc(email.toLowerCase());
-    const userDoc = await userRef.get();
-    if(userDoc.exists)
+    const olduserRef = db.collection('Users').where('email', '==',email);
+    const olduserDoc = await olduserRef.get();
+    if(olduserDoc._size != 0)
     {
         res.status(409).json({
             status: "failed",
             message: "user already exist. Plese login."
         })
+        return;
     }
 
     console.log("I am here");
-    const encryptedPassword = await bcrypt.hash(password, 10);
-    const newUser = {
+    const newUserRef = db.collection('Users').doc();
+    const encryptedPassword = await hashPassword(password);
+    const token = jwt.sign(
+    { user_id: newUserRef._path.segments[1], email },
+    "dcdiciodfofbierheihr343220375jsdfbkjd##@%@#",
+    {expiresIn: "2h",}
+    );
+    
+    const newUser:EntryType = {
         firstName: firstName,
         lastName: lastName,
-        email: email.toLowerCase(),
+        email: email,
         password: encryptedPassword,
+        token: token
     }
 
-    await userRef.set(newUser);
+    await newUserRef.set(newUser);
     res.status(200).json({
         status: "success",
         message: "user created",
@@ -52,7 +67,7 @@ const register = async(req: Request, res: Response, next: NextFunction) =>{
 
 
 const login = async(req : Request, res: Response, next: NextFunction) => {
-    const email = req.body.email;
+    const email = req.body.email.toLowerCase();
     const password = req.body.password;
     // const {email, password, firstName, lastName} = req.body;
     if(!(email && password))
@@ -61,34 +76,59 @@ const login = async(req : Request, res: Response, next: NextFunction) => {
             status: "failed",
             message: "email and password are required."
         });
+        return;
     }
 
-    const userRef = db.collection('Users').doc(email.toLowerCase());
+    const userRef = db.collection('Users').where('email', '==', email);
     const userDoc = await userRef.get();
-    // console.log(userDoc);
-    if(userDoc.empty)
+    if(userDoc._size == 0)
     {
         res.status(409).json({
             status: "failed",
             message: "user doesnot exist. Plese register."
         })
+        return;
     }
 
-    const encryptedPassword = await bcrypt.hash(password, 10);
-    const fetchedUser = await userDoc.data();
-    console.log(fetchedUser)
-    if(await bcrypt.compare(encryptedPassword, fetchedUser.password))
+    const user = userDoc.docs.map(
+        (doc: any) => (
+            {
+                id: doc.id,
+                ...doc.data(),
+            }
+        )
+    )[0];
+    console.log(user);
+    // const encryptedPassword = await bcrypt.hash(password, 10);
+    // console.log(encryptedPassword);
+    console.log(user.password);
+    const valid = await validatePassword(password, user.password);
+    //How to compare user.password (which is hashed stored in db) and password(entered by user)
+    if(!valid)
     {
         res.status(400).json({
             status: 'failed',
             message: "Login failed. Incorrect credentials."
         })
+        return;
     }
 
+    console.log("##############################################")
+    const token = jwt.sign(
+    {user_id: user.id, email},
+    "dcdiciodfofbierheihr343220375jsdfbkjd##@%@#",
+    {expiresIn: "2h",}
+    );
+
+    user.token = token;
+    const alreadyUser = db.collection('Users').doc(user.id);
+    alreadyUser.update({
+        token: token
+    })
     res.status(200).json({
         status: "success",
         message: "Login successful.",
-        data: fetchedUser
+        data: user
     })
 };
 
