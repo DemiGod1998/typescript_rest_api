@@ -2,7 +2,6 @@
 import { Response, NextFunction } from "express";
 // import axios, { AxiosResponse } from 'axios';
 import { db } from "../config/firebase";
-
 // interface Post {
 //     userId: Number;
 //     id: Number;
@@ -183,5 +182,5 @@ export default {
     getPost, 
     updatePost, 
     deletePost, 
-    addPost
+    addPost,
  };
