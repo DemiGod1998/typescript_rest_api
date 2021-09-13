@@ -1,6 +1,7 @@
 import { Response, NextFunction } from "express";
 import { db } from "../config/firebase";
 import {hashPassword, validatePassword} from "./hash"
+import { TOKEN_STRING } from "./config";
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 type EntryType = {
@@ -45,7 +46,7 @@ const register = async(req: Request, res: Response, next: NextFunction) =>{
     const encryptedPassword = await hashPassword(password);
     const token = jwt.sign(
     { user_id: newUserRef._path.segments[1], email },
-    "dcdiciodfofbierheihr343220375jsdfbkjd##@%@#",
+    TOKEN_STRING,
     {expiresIn: "2h",}
     );
     
@@ -116,7 +117,7 @@ const login = async(req : Request, res: Response, next: NextFunction) => {
     console.log("##############################################")
     const token = jwt.sign(
     {user_id: user.id, email},
-    "dcdiciodfofbierheihr343220375jsdfbkjd##@%@#",
+    TOKEN_STRING,
     {expiresIn: "2h",}
     );
 
