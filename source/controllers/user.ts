@@ -16,6 +16,8 @@ type Request= {
     body: EntryType
 }
 
+const verbose: boolean = false;
+
 const register = async(req: Request, res: Response, next: NextFunction) =>{
     const email = req.body.email.toLowerCase();
     const password = req.body.password;
@@ -41,7 +43,9 @@ const register = async(req: Request, res: Response, next: NextFunction) =>{
         return;
     }
 
-    console.log("I am here");
+    if(verbose)
+        console.log("I am here");
+    
     const newUserRef = db.collection('Users').doc();
     const encryptedPassword = await hashPassword(password);
     const token = jwt.sign(
@@ -99,10 +103,13 @@ const login = async(req : Request, res: Response, next: NextFunction) => {
             }
         )
     )[0];
-    console.log(user);
+    if(verbose)
+    {
+        console.log(user);
+        console.log(user.password);
+    }
     // const encryptedPassword = await bcrypt.hash(password, 10);
     // console.log(encryptedPassword);
-    console.log(user.password);
     const valid = await validatePassword(password, user.password);
     //How to compare user.password (which is hashed stored in db) and password(entered by user)
     if(!valid)
@@ -114,13 +121,14 @@ const login = async(req : Request, res: Response, next: NextFunction) => {
         return;
     }
 
-    console.log("##############################################")
+    if(verbose)
+        console.log("##############################################")
+    
     const token = jwt.sign(
     {user_id: user.id, email},
     TOKEN_STRING,
     {expiresIn: "2h",}
     );
-
     user.token = token;
     const alreadyUser = db.collection('Users').doc(user.id);
     alreadyUser.update({
