@@ -3,7 +3,8 @@ import express, { Express } from 'express';
 import morgan from 'morgan';
 import routes from './routes/posts';
 import  swaggerUi from 'swagger-ui-express';
-const swaggerDocument = require('./swagger-docs.json');
+const swaggerDocument = require('./swagger/swagger-docs.json');
+// const swaggerStyle = require('./swagger/swagger.css');
 const router: Express = express();
 
 /** Logging */
@@ -26,10 +27,16 @@ router.use((req, res, next) => {
     }
     next();
 });
-
+ 
 /** Routes */
 router.use('/', routes);
-router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+
+var options = {
+    explorer: true,
+    customCss: '.swagger-ui .topbar { display: none } .swagger-ui .info .title {color: magenta;}',
+    // customCssUrl: "/Users/rajansukanth/Desktop/Projects/typescript_rest_api/source/swagger/custom.css"
+};
+router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options))
 
 /** Error handling */
 router.use((req, res, next) => {
