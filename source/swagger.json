@@ -1,0 +1,11 @@
+{
+    "swagger": "2.0",
+    "info" : {
+        "version" : "1.0.0",
+        "title" : "TYPESCRIPT_REST_API",
+        "description": "A basic preoject to learn typescript express swagger etc.",
+        "license":{
+            "name" : "MIT"
+        }
+    }
+}
