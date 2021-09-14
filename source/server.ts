@@ -3,7 +3,7 @@ import express, { Express } from 'express';
 import morgan from 'morgan';
 import routes from './routes/posts';
 import  swaggerUi from 'swagger-ui-express';
-import * as swaggerDocument from "./swagger.json";
+const swaggerDocument = require('./swagger-docs.json');
 const router: Express = express();
 
 /** Logging */

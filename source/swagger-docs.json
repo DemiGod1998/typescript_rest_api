@@ -1,0 +1,362 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a simple typescript project to learn express, rest apis and swagger.",
+        "version": "1.0.0",
+        "title": "TYPESCRIPT_REST_API",
+        "contact": {
+            "email": "abc@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "schemes": ["http"],
+    "host": "localhost:6060",
+    "basePath": "/",
+    "paths" : {
+        "/posts" : {
+            "get" : {
+                "summary" : "Get all the posts",
+                "description": "Get all the posts",
+                "produces": ["application/json"],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/postResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post" : {
+                "summary" : "Add new post",
+                "description": "Add new post and create a unique identifier",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "post content",
+                        "description": "post specific content",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type" : "string"
+                                },
+                                "text": {
+                                    "type" : "string"
+                                } 
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/postResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/{entryId}" : {
+            "get" : {
+                "summary" : "Get a single post",
+                "description": "Retrieve a single post based on entryId",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name" : "entryId",
+                        "in": "path",
+                        "description": "post id to be retrieved",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/postResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "put" : {
+                "summary" : "Update post given its entryId",
+                "description": "Update post content based on entryId",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name" : "entryId",
+                        "in": "path",
+                        "description": "post id to be updated",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name" : "Updated post content",
+                        "in" : "body",
+                        "description": "New content for the post",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type" : "string"
+                                },
+                                "text": {
+                                    "type" : "string"
+                                } 
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/postResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete" : {
+                "summary" : "Delete a single post",
+                "description": "Delete a single post based on entryId",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name" : "entryId",
+                        "in": "path",
+                        "description": "post id to be deleted",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/deleteResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/register" : {
+            "post" : {
+                "summary" : "Register a new user",
+                "description": "Register a new user given firstName, lastName, email, and password.",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name": "User details",
+                        "in": "body",
+                        "description": "User details to register a new user",
+                        "required": true,
+                        "schema": {
+                            "type" : "object",
+                            "properties": {
+                                "email":{
+                                    "type": "string"
+                                },
+                                "password":{
+                                    "type": "string"
+                                },
+                                "firstName":{
+                                    "type": "string"
+                                },
+                                "lastName":{
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/userResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/deleteResponse"
+                        }
+                    },
+                    "409":{
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/deleteResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/welcome":{
+            "post":{
+                "summary": "Validate token",
+                "description": "Validate token",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name" : "token",
+                        "in": "body",
+                        "description": "Generated JWT token",
+                        "required": true,
+                        "schema": {
+                            "type" : "object",
+                            "properties": {
+                                "token":{
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "403" : {
+                        "description": "Operation failed. No token sent."
+                    },
+                    "401" :{
+                        "description": "Operation failed. Invalid token."
+                    }
+                }
+            }
+        },
+        "/login" : {
+            "post" : {
+                "summary" : "Login an existing user",
+                "description": "Login an existing user given email, and password.",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name": "Login details",
+                        "in": "body",
+                        "description": "Login details of an existing user",
+                        "required": true,
+                        "schema": {
+                            "type" : "object",
+                            "properties": {
+                                "email":{
+                                    "type": "string"
+                                },
+                                "password":{
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/userResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/deleteResponse"
+                        }
+                    },
+                    "409":{
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/deleteResponse"
+                        }
+                    }
+                }
+            }
+        }
+    }, 
+    "definitions": {
+        "postResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                     "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "deleteResponse":{
+            "type" : "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "userResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "email" : {
+                            "type": "string"
+                        },
+                        "password" : {
+                            "type": "string"
+                        },
+                        "firstName" : {
+                            "type": "string"
+                        },
+                        "lastName" : {
+                            "type": "string"
+                        },
+                        "token" : {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

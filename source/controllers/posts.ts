@@ -91,7 +91,7 @@ const getPosts = async(req: Request, res: Response, next: NextFunction) => {
     // )
     querySnapshot.docs.forEach((doc: any) => allEntries.push(doc.data()))
     return res.status(200).json(allEntries)
-}
+};
 
 // getting a single post
 const getPost = async (req: Request, res: Response, next: NextFunction) => {
