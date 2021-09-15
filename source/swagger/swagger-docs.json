@@ -103,7 +103,7 @@
                 }
             },
             "put" : {
-                "summary" : "Update post given its entryId",
+                "summary" : "Update a single post",
                 "description": "Update post content based on entryId",
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
@@ -164,7 +164,7 @@
                         "schema": {
                             "type": "object",
                             "items": {
-                                "$ref": "#/definitions/deleteResponse"
+                                "$ref": "#/definitions/invalidResponse"
                             }
                         }
                     }
@@ -211,45 +211,14 @@
                     "400": {
                         "description": "Invalid Request",
                         "schema": {
-                            "$ref": "#/definitions/deleteResponse"
+                            "$ref": "#/definitions/invalidResponse"
                         }
                     },
                     "409":{
                         "description": "Invalid Request",
                         "schema": {
-                            "$ref": "#/definitions/deleteResponse"
+                            "$ref": "#/definitions/invalidResponse"
                         }
-                    }
-                }
-            }
-        },
-        "/welcome":{
-            "post":{
-                "summary": "Validate token",
-                "description": "Validate token",
-                "produces": ["application/json"],
-                "parameters": [
-                    {
-                        "name" : "token",
-                        "in": "body",
-                        "description": "Generated JWT token",
-                        "required": true,
-                        "schema": {
-                            "type" : "object",
-                            "properties": {
-                                "token":{
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "403" : {
-                        "description": "Operation failed. No token sent."
-                    },
-                    "401" :{
-                        "description": "Operation failed. Invalid token."
                     }
                 }
             }
@@ -288,14 +257,45 @@
                     "400": {
                         "description": "Invalid Request",
                         "schema": {
-                            "$ref": "#/definitions/deleteResponse"
+                            "$ref": "#/definitions/invalidResponse"
                         }
                     },
                     "409":{
                         "description": "Invalid Request",
                         "schema": {
-                            "$ref": "#/definitions/deleteResponse"
+                            "$ref": "#/definitions/invalidResponse"
                         }
+                    }
+                }
+            }
+        },
+        "/welcome":{
+            "post":{
+                "summary": "Validate token",
+                "description": "Validate token",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name" : "token",
+                        "in": "body",
+                        "description": "Generated JWT token",
+                        "required": true,
+                        "schema": {
+                            "type" : "object",
+                            "properties": {
+                                "token":{
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "403" : {
+                        "description": "Operation failed. No token sent."
+                    },
+                    "401" :{
+                        "description": "Operation failed. Invalid token."
                     }
                 }
             }
@@ -316,7 +316,7 @@
                 }
             }
         },
-        "deleteResponse":{
+        "invalidResponse":{
             "type" : "object",
             "properties": {
                 "status": {
